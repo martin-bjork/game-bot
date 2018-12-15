@@ -47,6 +47,8 @@ namespace GameBot {
 
         private GameState GetGameState() {
 
+            // TODO: Generate the indices to be searched instead of extracting the rows
+
             bool canBeChaos = true;
 
             // Columns
@@ -109,11 +111,58 @@ namespace GameBot {
         }
 
         private bool IsOrder(TileState[] tiles) {
-            throw new NotImplementedException();
+            TileState orderCandidate = tiles[0];
+            int successiveOrderTiles = orderCandidate != TileState.EMPTY ? 1 : 0;
+
+            for (int i = 1; i < tiles.Length; i++) {
+
+                // If any tile except the first one is an empty tile
+                // without us already having deduced that this is
+                // order, it is impossible for this to be order
+                if (tiles[i] == TileState.EMPTY) {
+                    return false;
+                }
+
+                if (tiles[i] != orderCandidate) {
+                    // If we change tile state after the first tile, 
+                    // it's impossible for this to be order
+                    if (i > 1) {
+                        return false;
+                    } else {
+                        orderCandidate = tiles[i];
+                    }
+                } else {
+                    successiveOrderTiles++;
+                    if (successiveOrderTiles == Constants.GRID_SIZE - 1) {
+                        return true;
+                    }
+                }
+            }
+            // We will only reach this state if we test one of the off-diagonals
+            // and that one isn't order
+            return false;
         }
 
         private bool IsChaos(TileState[] tiles) {
-            throw new NotImplementedException();
+            bool foundBlack = false;
+            bool foundWhite = false;
+            // If there are both black and white pieces among the
+            // tiles that are not directly at the edge, this is chaos
+            for (int i = 1; i < tiles.Length - 1; i++) {
+                switch (tiles[i]) {
+                    case TileState.BLACK:
+                        foundBlack = true;
+                        break;
+                    case TileState.WHITE:
+                        foundWhite = true;
+                        break;
+                    case TileState.EMPTY:
+                        break;
+                    default:
+                        throw new InvalidOperationException($"Unexpected tile state: {tiles[i]}");
+                }
+            }
+            return foundBlack && foundWhite;
         }
 
     }
