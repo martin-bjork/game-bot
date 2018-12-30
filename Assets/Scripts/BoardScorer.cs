@@ -117,12 +117,12 @@ namespace GameBot {
 
         private static bool IsOrder(Board board, BoardCoordinate[] row) {
 
-            TileState orderCandidate = board.Grid[row[0].X, row[0].Y];
+            TileState orderCandidate = board.GetTileState(row[0]);
             int successiveOrderTiles = orderCandidate != TileState.EMPTY ? 1 : 0;
 
             for (int i = 1; i < row.Length; i++) {
 
-                TileState tile = board.Grid[row[i].X, row[i].Y];
+                TileState tile = board.GetTileState(row[i]);
 
                 // If any tile except the first one is an empty tile
                 // without us already having deduced that this is
@@ -163,7 +163,7 @@ namespace GameBot {
             // If there are both black and white pieces among the
             // tiles this is chaos
             for (int i = startIndex; i < Constants.GRID_SIZE - 1; i++) {
-                switch (board.Grid[row[i].X, row[i].Y]) {
+                switch (board.GetTileState(row[i])) {
                     case TileState.BLACK:
                         foundBlack = true;
                         break;
@@ -173,7 +173,7 @@ namespace GameBot {
                     case TileState.EMPTY:
                         break;
                     default:
-                        throw new InvalidOperationException($"Unexpected tile state: {board.Grid[row[i].X, row[i].Y]}");
+                        throw new InvalidOperationException($"Unexpected tile state: {board.GetTileState(row[i])}");
                 }
             }
             return foundBlack && foundWhite;

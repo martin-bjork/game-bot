@@ -1,31 +1,44 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace GameBot {
 
     public class Board {
 
-        public TileState[,] Grid { get; private set; } = new TileState[Constants.GRID_SIZE, Constants.GRID_SIZE];
+        private TileState[,] grid = new TileState[Constants.GRID_SIZE, Constants.GRID_SIZE];
 
         public void CopyFrom(Board board) {
-            Array.Copy(board.Grid, Grid, Grid.Length);
+            Array.Copy(board.grid, grid, grid.Length);
         }
 
-        public void AddPiece(int x, int y, TileState piece) {
+        public TileState GetTileState(BoardCoordinate coordinate) {
+            return grid[coordinate.X, coordinate.Y];
+        }
 
-            if (x < 0 || x >= Constants.GRID_SIZE || y < 0 || y >= Constants.GRID_SIZE) {
-                throw new ArgumentException($"({x}, {y}) is not a valid tile coordinate");
-            }
+        public void MakeMove(Move move) {
 
-            if (piece == TileState.EMPTY) {
-                throw new ArgumentException("Cannot add empty piece");
-            }
-
-            if (Grid[x, y] != TileState.EMPTY) {
+            if (GetTileState(move.Coordinate) != TileState.EMPTY) {
                 throw new ArgumentException("Cannot add piece to non-empty tile");
             }
 
-            Grid[x, y] = piece;
+            grid[move.Coordinate.X, move.Coordinate.Y] = move.Piece;
+        }
 
+        public List<Move> GenerateValidMoves() {
+
+            List<Move> validMoves = new List<Move>();
+
+            for (int i = 0; i < Constants.GRID_SIZE; i++) {
+                for (int j = 0; j < Constants.GRID_SIZE; j++) {
+                    if (grid[i, j] == TileState.EMPTY) {
+                        BoardCoordinate coordinate = new BoardCoordinate(i, j);
+                        validMoves.Add(new Move(coordinate, TileState.BLACK));
+                        validMoves.Add(new Move(coordinate, TileState.WHITE));
+                    }
+                }
+            }
+
+            return validMoves;
         }
 
     }
