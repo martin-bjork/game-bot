@@ -7,21 +7,26 @@ namespace GameBot {
 
         private TileState[,] grid = new TileState[Constants.GRID_SIZE, Constants.GRID_SIZE];
 
-        public void CopyFrom(Board board) {
-            Array.Copy(board.grid, grid, grid.Length);
+        public Board() { }
+
+        public Board(Board sourceBoard) {
+            CopyStateFrom(sourceBoard);
         }
 
         public TileState GetTileState(BoardCoordinate coordinate) {
             return grid[coordinate.X, coordinate.Y];
         }
 
-        public void MakeMove(Move move) {
+        public Board MakeMove(Move move) {
 
             if (GetTileState(move.Coordinate) != TileState.EMPTY) {
                 throw new ArgumentException("Cannot add piece to non-empty tile");
             }
 
-            grid[move.Coordinate.X, move.Coordinate.Y] = move.Piece;
+            Board newBoard = new Board(this);
+            newBoard.grid[move.Coordinate.X, move.Coordinate.Y] = move.Piece;
+
+            return newBoard;
         }
 
         public List<Move> GenerateValidMoves() {
@@ -39,6 +44,10 @@ namespace GameBot {
             }
 
             return validMoves;
+        }
+
+        private void CopyStateFrom(Board board) {
+            Array.Copy(grid, board.grid, grid.Length);
         }
 
     }
