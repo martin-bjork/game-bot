@@ -75,8 +75,10 @@ namespace GameBot {
         }
 
         public static int GetScore(Board board) {
+            return GetScore(GetGameState(board));
+        }
 
-            GameState gameState = GetGameState(board);
+        public static int GetScore(GameState gameState) {
 
             switch (gameState) {
                 case GameState.ORDER:

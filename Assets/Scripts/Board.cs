@@ -9,24 +9,26 @@ namespace GameBot {
 
         public Board() { }
 
-        public Board(Board sourceBoard) {
-            CopyStateFrom(sourceBoard);
-        }
-
         public TileState GetTileState(BoardCoordinate coordinate) {
             return grid[coordinate.X, coordinate.Y];
         }
 
-        public Board MakeMove(Move move) {
+        public void MakeMove(Move move) {
 
             if (GetTileState(move.Coordinate) != TileState.EMPTY) {
                 throw new ArgumentException("Cannot add piece to non-empty tile");
             }
 
-            Board newBoard = new Board(this);
-            newBoard.grid[move.Coordinate.X, move.Coordinate.Y] = move.Piece;
+            grid[move.Coordinate.X, move.Coordinate.Y] = move.Piece;
+        }
 
-            return newBoard;
+        public void UndoMove(Move move) {
+
+            if (GetTileState(move.Coordinate) != move.Piece) {
+                throw new ArgumentException("Cannot undo move that hasn't been made");
+            }
+
+            grid[move.Coordinate.X, move.Coordinate.Y] = TileState.EMPTY;
         }
 
         public List<Move> GenerateValidMoves() {
@@ -44,10 +46,6 @@ namespace GameBot {
             }
 
             return validMoves;
-        }
-
-        private void CopyStateFrom(Board board) {
-            Array.Copy(grid, board.grid, grid.Length);
         }
 
     }
