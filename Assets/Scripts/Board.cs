@@ -8,7 +8,13 @@ namespace GameBot {
 
         private TileState[,] grid = new TileState[Constants.GRID_SIZE, Constants.GRID_SIZE];
 
-        public Board() { }
+        public Board() {
+            for (int i = 0; i < Constants.GRID_SIZE; i++) {
+                for (int j = 0; j < Constants.GRID_SIZE; j++) {
+                    grid[i, j] = TileState.EMPTY;
+                }
+            }
+        }
 
         public TileState GetTileState(BoardCoordinate coordinate) {
             return grid[coordinate.X, coordinate.Y];
@@ -49,7 +55,7 @@ namespace GameBot {
             return validMoves;
         }
 
-        public string GenerateBoardVisualization(char blackToken = 'X', char whiteToken = 'O', char spaceToken = ' ') {
+        public string GenerateBoardVisualization(char blackToken = 'X', char whiteToken = 'O', char spaceToken = '.') {
 
             // Set it to default size grid size + padding of one character on each side + one newline per row
             StringBuilder sb = new StringBuilder((Constants.GRID_SIZE + 3) * (Constants.GRID_SIZE + 2));
@@ -60,6 +66,7 @@ namespace GameBot {
                 sb.Append('-');
             }
             sb.Append(' ');
+            sb.Append(Environment.NewLine);
 
             // Grid
             for (int i = 0; i < Constants.GRID_SIZE; i++) {

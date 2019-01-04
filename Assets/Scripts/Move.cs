@@ -17,6 +17,10 @@ namespace GameBot {
             Piece = piece;
         }
 
+        public override string ToString() {
+            return $"Move {{ Piece: {Piece}, Coordinate: ({Coordinate.X}, {Coordinate.Y}) }}";
+        }
+
     }
 
 }
