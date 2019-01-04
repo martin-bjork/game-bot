@@ -5,7 +5,23 @@ namespace GameBot {
 
     public class Bot {
 
-        public Move GetBestMove(Board board, int maxDepth, int playerColour) {
+        public Move GetBestMove(Board board, int maxDepth, PlayerType playerType) {
+
+            if (maxDepth < 1) {
+                throw new ArgumentException("The search depth must be at least 1");
+            }
+
+            int playerColour;
+            switch (playerType) {
+                case PlayerType.CHAOS:
+                    playerColour = -1;
+                    break;
+                case PlayerType.ORDER:
+                    playerColour = 1;
+                    break;
+                default:
+                    throw new ArgumentException($"Encountered unexpected player type: {playerType}");
+            }
 
             int bestScore = int.MinValue;
             Move bestMove = null;
@@ -13,7 +29,7 @@ namespace GameBot {
             List<Move> possibleMoves = board.GenerateValidMoves();
             foreach (Move move in possibleMoves) {
                 board.MakeMove(move);
-                int score = NegamaxAlphaBeta(board, int.MinValue, int.MaxValue, maxDepth, playerColour);
+                int score = NegamaxAlphaBeta(board, int.MinValue, int.MaxValue, maxDepth - 1, playerColour);
                 board.UndoMove(move);
 
                 if (score > bestScore) {
@@ -23,6 +39,7 @@ namespace GameBot {
             }
 
             // TODO: Figure out if it's possible for bestMove to be null here
+            // If there are no valid moves to make, it will be null
 
             return bestMove;
         }
